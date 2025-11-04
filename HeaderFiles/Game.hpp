@@ -16,7 +16,7 @@ class Game
     private:
         // Stores the players
         std::vector< std::shared_ptr< PlayerController > > players;
-        
+        GameState currentGameState;
     public:
         // Constructor taking in the two players
         Game(std::shared_ptr< PlayerController > player1, std::shared_ptr< PlayerController > player2);
