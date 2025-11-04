@@ -1,5 +1,5 @@
 Compiler = clang++
-Flags = -g
+Flags = -std=c++17 -g
 
 Yahtzee: main.o Game.o HumanPlayer.o
 		${Compiler} ${Flags} $^ -o $@

@@ -7,5 +7,6 @@ int main()
     auto p2 = std::make_shared<HumanPlayer>("Player 2");
     Game mainGame(p1, p2);
 
+    mainGame.printGameState();
     return 0;
 }

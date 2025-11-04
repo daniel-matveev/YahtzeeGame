@@ -16,7 +16,7 @@
 struct CategoryData
 {
     int score = 0;
-    int used = false;
+    bool used = false;
 };
 
 struct GameState
