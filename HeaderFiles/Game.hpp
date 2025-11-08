@@ -19,17 +19,29 @@ class Game
     private:
         // Stores the players
         std::vector< std::shared_ptr< PlayerController > > players;
+        
         GameState currentGameState;
         std::vector<std::string> categories;
 
-        std::vector<int> getTotalScores() ;
+        std::vector<int> getTotalScores();
 
+        int currentPlayerIndex;
         void initialiseGameState();
+        void resetGameState();
+
+        void playTurn();
+
+        void applyAction(Action& toDoAction);
+
+        void rollDice(std::vector<int> rollIndices);
     public:
         // Constructor taking in the two players
         Game(std::shared_ptr< PlayerController > player1, std::shared_ptr< PlayerController > player2);
         
+        void printCurrentHand();
         void printGameState();
+
+        void startGame();
 
 };
 

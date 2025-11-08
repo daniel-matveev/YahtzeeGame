@@ -46,6 +46,11 @@
         "unordered_map": "cpp",
         "variant": "cpp",
         "vector": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "__config": "cpp",
+        "__tree": "cpp",
+        "map": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp"
     }
 }

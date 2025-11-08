@@ -24,7 +24,7 @@ enum class ActionType
 struct Action 
 {
     ActionType type;
-    std::vector<int> playerHand;
+    std::vector<int> diceToRoll;
     std::string category;
 };
 
