@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <set>
 
 #include "GameState.hpp"
 #include "PlayerController.hpp"
@@ -33,11 +34,20 @@ class Game
 
         void applyAction(Action& toDoAction);
 
+        bool hasLargeStraight();
+        bool hasSmallStraight();
+        bool hasNOfAKind(int n);
+        bool hasFullHouse();
+
+        int sumDice();
+        std::vector<int> countDice();
         void rollDice(std::vector<int> rollIndices);
     public:
         // Constructor taking in the two players
         Game(std::shared_ptr< PlayerController > player1, std::shared_ptr< PlayerController > player2);
         
+        int computeScore(std::string category);
+
         void printCurrentHand();
         void printGameState();
 

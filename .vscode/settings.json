@@ -51,6 +51,7 @@
         "__tree": "cpp",
         "map": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "set": "cpp"
     }
 }

@@ -1,5 +1,6 @@
 #include "HeaderFiles/Game.hpp"
 
+
 // Game constructor, initialising memeber variables
 Game::Game(std::shared_ptr<PlayerController> player1, std::shared_ptr<PlayerController> player2) 
     : players{player1, player2} 
@@ -51,8 +52,10 @@ void Game::playTurn()
     {
         Action toDoAction = currentPlayer->chooseAction(this->currentGameState);
 
+        bool isCategoryNotUsed = this->currentGameState.scores[this->players[this->currentPlayerIndex]->playerName][toDoAction.category].used == false;
         this->applyAction(toDoAction);
-        if (toDoAction.type == ActionType::ChooseCategory)
+
+        if (toDoAction.type == ActionType::ChooseCategory && isCategoryNotUsed)
         {
             turnOver = true;
         }
@@ -63,20 +66,112 @@ void Game::applyAction(Action& toDoAction)
 {
     switch (toDoAction.type)
     {
-    case ActionType::RollDice:
-        this->rollDice({});
-        break;
-    case ActionType::HoldDice:
-        this->rollDice(toDoAction.diceToRoll);
-        break;
-    case ActionType::ChooseCategory:
+        case ActionType::RollDice:
+            this->rollDice({});
+            break;
+        case ActionType::HoldDice:
+            this->rollDice(toDoAction.diceToRoll);
+            break;
+        case ActionType::ChooseCategory:
+            int score = this->computeScore(toDoAction.category);
+            this->currentGameState.scores[this->players[this->currentPlayerIndex]->playerName][toDoAction.category] = {score, true};
+            break;
 
-        break;
-    default:
-        break;
     }
 }
 
+
+
+int Game::computeScore(std::string categoryToCompute)
+{
+    std::vector<int> counts = this->countDice();
+    if (categoryToCompute == this->categories[0]) return counts.at(1);
+    else if (categoryToCompute == this->categories[1]) return counts.at(2);
+    else if (categoryToCompute == this->categories[2]) return counts.at(3);
+    else if (categoryToCompute == this->categories[3]) return counts.at(4);
+    else if (categoryToCompute == this->categories[4]) return counts.at(5);
+    else if (categoryToCompute == this->categories[5]) return counts.at(6);
+    else if (categoryToCompute == this->categories[6]) return counts.at(2);
+    else if (categoryToCompute == this->categories[6]) return this->hasNOfAKind(3) ? sumDice() : 0;
+    else if (categoryToCompute == this->categories[7]) return this->hasNOfAKind(4) ? sumDice() : 0;
+    else if (categoryToCompute == this->categories[8]) return this->hasFullHouse() ? 25 : 0;
+    else if (categoryToCompute == this->categories[9]) return this->hasSmallStraight() ? 30 : 0;
+    else if (categoryToCompute == this->categories[10]) return this->hasLargeStraight() ? 40 : 0;
+    else if (categoryToCompute == this->categories[11]) return this->hasNOfAKind(5) ? 50 : 0;
+    else if (categoryToCompute == this->categories[12]) return this->sumDice(); 
+    else return 0;
+}
+
+int Game::sumDice()
+{
+    int sum = 0;
+    for (int die : this->currentGameState.dice)
+    {
+        sum += die;
+    }
+    return sum;
+}
+
+bool Game::hasLargeStraight()
+{
+    std::set<int> orderedDice(this->currentGameState.dice.begin(), this->currentGameState.dice.end());
+    
+    if (orderedDice.size() != 5) return false;
+
+    std::vector<int> dice(orderedDice.begin(), orderedDice.end());
+
+    return (dice.back() - dice.front() == 4);
+}
+
+bool Game::hasSmallStraight()
+{
+    std::set<int> orderedDice(this->currentGameState.dice.begin(), this->currentGameState.dice.end());
+    std::vector<int> dice(orderedDice.begin(), orderedDice.end());
+    
+    if (dice.size() < 4) return false;
+
+    for (int i = 0; i+3 < dice.size(); i++)
+    {
+        if (dice.back() - dice.front() == 3) return true;
+    }
+
+    return false;
+}
+
+bool Game::hasFullHouse()
+{
+    bool has3 = false;
+    bool has2 = false;
+
+    for (int i = 1; i < 7; i++)
+    {
+        if (this->currentGameState.dice[i] == 2) has2 = true;
+        if (this->currentGameState.dice[i] == 3) has3 = true;
+    }
+
+    return has2 & has3;
+}
+
+bool Game::hasNOfAKind(int n)
+{
+    for (int i = 1; i < 7; i++)
+    {
+        if (this->currentGameState.dice[i] == 3) return true;
+    }
+    return false;
+}
+
+std::vector<int> Game::countDice()
+{
+    std::vector<int> counts = {0, 0, 0, 0, 0, 0, 0};
+
+    for(int die : this->currentGameState.dice)
+    {
+        counts[die] ++;
+    }
+
+    return counts;
+}
 
 void Game::rollDice(std::vector<int> holdIndices)
 {
